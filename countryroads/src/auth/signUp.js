@@ -95,10 +95,11 @@ function SignUp(props) {
         return errors
       }}
 
-      onSubmit = {(values, { setSubmitting }) => {
+      onSubmit = {(values, { setSubmitting, resetForm }) => {
         setTimeout(() => {
           signUp(values)
           setSubmitting(false)
+          resetForm({})
         }, 400);
       }}
     >
@@ -117,6 +118,7 @@ function SignUp(props) {
           <Field
             component={TextField}
             className={classes.root}
+            onChange={handleChange}
             type="text"
             label="Name"
             name="name"
@@ -126,6 +128,7 @@ function SignUp(props) {
           <Field
             component={TextField}
             className={classes.root}
+            onChange={handleChange}
             type="email"
             label="Email"
             name="email"
@@ -135,8 +138,9 @@ function SignUp(props) {
         <Field
           component={TextField}
           className={classes.root}
+          onChange={handleChange}
           type="text"
-          label="Phone Number"
+          label="Phone"
           name="phone"
         />
         </Box>
@@ -144,6 +148,7 @@ function SignUp(props) {
           <Field
             component={TextField}
             className={classes.root}
+            onChange={handleChange}
             type="password"
             label="Password"
             name="password"
@@ -153,6 +158,7 @@ function SignUp(props) {
           <Field
             component={TextField}
             className={classes.root}
+            onChange={handleChange}
             type="password"
             label="Confirm Password"
             name="confPassword"

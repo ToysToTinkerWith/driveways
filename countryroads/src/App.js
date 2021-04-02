@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react"
 
-import { Button, Typography, makeStyles } from "@material-ui/core"
+import { Button, makeStyles } from "@material-ui/core"
 
 import Auth from "./auth/auth"
 import Map from "./map/map"
-import Upload from "./upload"
+import NewClient from "./newClient"
 
 import "./App.css"
 
@@ -54,16 +54,15 @@ function Main(props) {
       <div>
 
         <div>
-
-        <Typography className={classes.title} gutterBottom variant="h2" align="center" color="secondary">Country Road</Typography>
+        <br/>
         
-        <br/>
-        <br/>
 
         <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => setPage("map")}>map</Button>
-        <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => setPage("upload")}>upload</Button>
-        <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => auth.signOut()}>logout</Button>
+        <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => setPage("newClient")}>+ client</Button>
 
+        <Button className={classes.buttonStyle} style={{float: "right"}} variant="outlined" color="secondary" onClick={() => auth.signOut()}>logout</Button>
+
+        
         </div>
 
         <br />
@@ -73,8 +72,8 @@ function Main(props) {
         null
         }
 
-        {page === "upload" ?
-        <Upload uid={user.uid} username={user.displayName} /> :
+        {page === "newClient" ?
+        <NewClient uid={user.uid} username={user.displayName} /> :
         null
         }
 
