@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { db, storage } from "./firebase"
 import firebase from "firebase"
 
 import GoogleMapReact from 'google-map-react';
 import ImageUploader from "react-images-upload";
 
-import { Formik, Form } from 'formik';
-import { Button, Typography, TextField, Input, CircularProgress, Box, makeStyles } from '@material-ui/core'
+import countryroads from "./imgs/countryroads.png"
 
-const Marker = () => <div><h3> Drivewayeeee </h3></div>
+import { Formik, Form } from 'formik';
+import { Button, Typography, TextField, CircularProgress, Box, makeStyles } from '@material-ui/core'
+
+const Marker = () => <div><img src={countryroads} alt="" height="50" width="50" /></div>
 
 const useStyles = makeStyles((theme) => ({
   confirm: {
@@ -19,11 +21,11 @@ const useStyles = makeStyles((theme) => ({
   },
   notes: {
     margin: theme.spacing(1),
-    width: '80%'
+    width: '100%'
   },
   address: {
     margin: theme.spacing(1),
-    width: '40ch'
+    width: '70%'
   }
 }))
  
@@ -56,9 +58,6 @@ function Upload(props) {
       })
       })
       
-
-    let imgNames = []
-
     for (let y = 0; y < pictures.length; y++) {
 
       const uploadTask = storage.ref("images/" + formData.address + "/" + pictures[y].name).put(pictures[y])
@@ -83,10 +82,13 @@ function Upload(props) {
   }
 
   const uploadstyle = {
-    backgroundColor: "#FAEBD7",
-    border: "4px solid brown",
+    backgroundColor: "#FFFFF0",
+    borderRadius: "15px",
+    boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     paddingLeft: "10px",
-    paddingRight: "10px"
+    paddingRight: "10px",
+    marginLeft: "10px",
+    marginRight: "10px"
   }
 
 

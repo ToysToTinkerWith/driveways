@@ -1,20 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import GoogleMapReact from 'google-map-react'
 
-import DrivewayView from "./drivewayView"
 import DrivewayMarker from "./drivewayMarker"
 
-
-import { db } from "./firebase"
-
-//import { db } from "../firebase"
-
-import { Button } from "@material-ui/core"
+import { db } from "../firebase"
 
 function Map() {
 
   const [driveways, setDriveways] = useState([])
-  const [driveway, setDriveway] = useState(null)
 
   useEffect(() => {
     
@@ -23,19 +16,8 @@ function Map() {
     })
 
   }, [])
+  
 
-  console.log(driveways.length)
-
-  if (driveway) {
-    return (
-      <div>
-        <Button variant="outlined" size="large" color="secondary" onClick={() => setDriveway(null)}>MAP</Button>
-        <DrivewayView driveway={driveway} />
-      </div>
-    )
-  }
-
-  else {
     return (
     <div>
       <div style={{ height: "100vh",  width: "100%" }}>
@@ -47,7 +29,7 @@ function Map() {
 
         {driveways.length > 0 ? 
           driveways.map(driveway => {
-        return <DrivewayMarker key={Math.random().toString(36)} lat={driveway.lat} lng={driveway.lng} setDriveway={setDriveway} driveway={driveway} />
+        return <DrivewayMarker key={Math.random().toString(36)} lat={driveway.lat} lng={driveway.lng} driveway={driveway} />
       }) :  null }
 
 
@@ -57,7 +39,7 @@ function Map() {
       </div>
     </div>
     )
-  }
+  
 
   
     

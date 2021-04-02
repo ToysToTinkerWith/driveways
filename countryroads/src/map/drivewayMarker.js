@@ -1,23 +1,12 @@
 import React, { useState, useEffect }from "react"
 
-import { Button, Avatar, IconButton, makeStyles } from "@material-ui/core"
+import { Avatar, IconButton } from "@material-ui/core"
 
-import { storage } from "./firebase"
-
-const useStyles = makeStyles((theme) => ({
-  
-  button: {
-   width: 5,
-   height: 20
-  }
-
-}))
+import { storage } from "../firebase"
 
 function DrivewayMarker(props) {
 
   const [imageUrl, setImageUrl] = useState(null)
-
-  const classes = useStyles()
 
   useEffect(() => {
     
@@ -27,13 +16,7 @@ function DrivewayMarker(props) {
     })
 
 
-  }, [])
-
-  const adoptstyle = {
-      color: "white",
-      backgroundColor: "blue",
-      textAlign: "center"
-    }
+  }, )
 
   return (
     <div>
