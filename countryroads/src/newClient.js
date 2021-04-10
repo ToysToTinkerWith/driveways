@@ -50,12 +50,14 @@ function NewClient(props) {
     db.collection("clients").add({
             name: formData.name,
             address: formData.address,
-            phone: formData.phone,
             email: formData.email,
+            phone: formData.phone,
             lat: formData.lat,
             lng: formData.lng,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            created: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function(doc) {
+
+      let clientId = doc.id
     
       let imgNames = []
 
@@ -68,12 +70,13 @@ function NewClient(props) {
         details: formData.details,
         scheduled: formData.schedule,
         price: formData.price,
-        imgs: imgNames
+        imgs: imgNames,
+        created: firebase.firestore.FieldValue.serverTimestamp()
       }).then(function(doc) {
 
         for (let y = 0; y < pictures.length; y++) {
 
-          const uploadTask = storage.ref("images/" + formData.address + "/" + formData.job + "/" + pictures[y].name).put(pictures[y])
+          const uploadTask = storage.ref("images/" + clientId + "/" + doc.id + "/" + pictures[y].name).put(pictures[y])
 
           uploadTask.on("state_changed", (snapshot) => {
             const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
@@ -94,7 +97,7 @@ function NewClient(props) {
 
   }
 
-  const locateAddress = (address) => {
+  const locateAddress = (address, setFieldValue) => {
     Geocode.fromAddress(address).then(
   (response) => {
     const { lat, lng } = response.results[0].geometry.location;
@@ -102,6 +105,8 @@ function NewClient(props) {
     setLat(lat)
     setLng(lng)
     setZoom(15)
+    setFieldValue("lat", lat)
+    setFieldValue("lng", lng)
   },
   (error) => {
     console.error(error)
@@ -133,8 +138,8 @@ function NewClient(props) {
       initialValues = {{ 
         name: "",
         address: "",
-        phone: "",
         email: "",
+        phone: "",
         lat: 0,
         lng: 0,
 
@@ -184,8 +189,6 @@ function NewClient(props) {
           name="name"
         />
 
-
-
         <TextField
           className={classes.input}
           onChange={handleChange}
@@ -193,18 +196,6 @@ function NewClient(props) {
           label="Address"
           name="address"
         />
-
-
-
-        <TextField
-          className={classes.input}
-          onChange={handleChange}
-          type="text"
-          label="Phone"
-          name="phone"
-        />
-
-
 
         <TextField
           className={classes.input}
@@ -214,11 +205,19 @@ function NewClient(props) {
           name="email"
         />
 
+        <TextField
+          className={classes.input}
+          onChange={handleChange}
+          type="text"
+          label="Phone"
+          name="phone"
+        />
+
       
       <br/>
       <br/>
 
-      <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => locateAddress(values.address)}
+      <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => locateAddress(values.address, setFieldValue)}
       >Locate Address</Button>
 
       <div style={{ height: "100vh", width: "100%" }}>
@@ -247,6 +246,7 @@ function NewClient(props) {
       <br/>
       <br/>
       <hr/>
+      <br/>
       <Typography variant="h5" color="secondary"> Job: </Typography>
 
 
@@ -296,9 +296,9 @@ function NewClient(props) {
           shrink: true,
         }}
       />
-
       <br/>
       <br/>
+    
 
       <ImageUploader
         withIcon={false}
@@ -308,7 +308,7 @@ function NewClient(props) {
         imgExtension={[".jpg", ".png", ".jpeg"]}
         maxFileSize={10485760}
       />
-      <CircularProgress variant="static" value={progress} />
+      <CircularProgress variant="determinate" value={progress} />
 
       <Typography className={classes.confirm}> {confirm} </Typography>
 

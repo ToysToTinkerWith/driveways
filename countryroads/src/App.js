@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react"
 
-import { Button, makeStyles } from "@material-ui/core"
+import { Button, Typography, makeStyles } from "@material-ui/core"
 
 import Auth from "./auth/auth"
 import Map from "./map/map"
 import NewClient from "./newClient"
+import ClientView from "./clientView"
 
 import "./App.css"
 
@@ -13,10 +14,14 @@ import { auth } from "./firebase"
 const useStyles = makeStyles({
   
   buttonStyle: {
-    backgroundColor: "#FFFFF0"
-  },
-  title: {
+    backgroundColor: "#FFFFF0",
     display: "inline"
+
+  },
+  date: {
+    display: "inline",
+    position: "absolute",
+    left: "45%"
   }
 
 })
@@ -25,6 +30,9 @@ function Main(props) {
 
   const [page, setPage] = useState("map")
   const [user, setUser] = useState(null)
+  const [clientId, setClientId] = useState(null)
+
+  const date = new Date()
 
   const classes = useStyles()
 
@@ -49,6 +57,7 @@ function Main(props) {
 
 
   if (user) {
+    console.log(date)
 
     return (
       <div>
@@ -60,7 +69,10 @@ function Main(props) {
         <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => setPage("map")}>map</Button>
         <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => setPage("newClient")}>+ client</Button>
 
-        <Button className={classes.buttonStyle} style={{float: "right"}} variant="outlined" color="secondary" onClick={() => auth.signOut()}>logout</Button>
+        <Typography className={classes.date} align="center" variant="h5" color="secondary" > {date.toLocaleDateString()} </Typography>
+
+
+        <Button className={classes.buttonStyle} style={{float: "right"}} variant="outlined" color="secondary" onClick={() => auth.signOut()}>log out</Button>
 
         
         </div>
@@ -68,14 +80,22 @@ function Main(props) {
         <br />
 
         {page === "map" ?
-        <Map /> :
+        <Map date={date} setPage={setPage} setClientId={setClientId} /> :
         null
         }
 
         {page === "newClient" ?
-        <NewClient uid={user.uid} username={user.displayName} /> :
+        <NewClient /> :
         null
         }
+
+        {page === "client" ?
+        <ClientView clientId={clientId} /> :
+        null
+        }
+
+
+
 
 
       </div>

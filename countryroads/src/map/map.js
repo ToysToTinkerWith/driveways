@@ -1,18 +1,18 @@
 import React, {useEffect, useState} from 'react'
 import GoogleMapReact from 'google-map-react'
 
-import DrivewayMarker from "./drivewayMarker"
+import ClientMarker from "./clientMarker"
 
 import { db } from "../firebase"
 
-function Map() {
+function Map(props) {
 
-  const [driveways, setDriveways] = useState([])
+  const [clients, setClients] = useState([])
 
   useEffect(() => {
     
-    db.collection("driveways").onSnapshot(snapshot => {
-      setDriveways(snapshot.docs.map(doc => doc.data()))
+    db.collection("clients").onSnapshot(snapshot => {
+      setClients(snapshot.docs.map(doc => [doc.data(), doc.id]))
     })
 
   }, [])
@@ -27,9 +27,9 @@ function Map() {
           zoom={10}
         >
 
-        {driveways.length > 0 ? 
-          driveways.map(driveway => {
-        return <DrivewayMarker key={Math.random().toString(36)} lat={driveway.lat} lng={driveway.lng} driveway={driveway} />
+        {clients.length > 0 ?
+          clients.map(client => {
+        return <ClientMarker key={Math.random().toString(36)} lat={client[0].lat} lng={client[0].lng} clientId={client[1]} date={props.date} setPage={props.setPage} setClientId={props.setClientId} />
       }) :  null }
 
 
