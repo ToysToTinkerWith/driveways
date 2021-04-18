@@ -1,5 +1,5 @@
 import React from 'react';
-import { db } from "./firebase"
+import { db } from "../firebase"
 
 import { Formik, Form } from 'formik';
 import { Button, TextField, makeStyles } from '@material-ui/core'

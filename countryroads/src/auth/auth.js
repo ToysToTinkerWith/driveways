@@ -1,8 +1,7 @@
-import React, { useState } from "react"
+import React from "react"
 import LogIn from "./logIn"
-import SignUp from "./signUp"
 
-import { Typography, Button, Grid, makeStyles } from '@material-ui/core'
+import { Typography, Grid, makeStyles } from '@material-ui/core'
 
 
 const useStyles = makeStyles({
@@ -15,7 +14,6 @@ const useStyles = makeStyles({
 
 function Auth(props) {
 
-  const [newUser, setNewUser] = useState(false)
   const classes = useStyles()
 
     return (
@@ -32,12 +30,7 @@ function Auth(props) {
         <Grid item xs={12} sm={6}>
           <LogIn />
           <br />
-          <Button color="secondary" variant="outlined" onClick={() => setNewUser(!newUser)}> New Employee? </Button>
-          <br />
-          {newUser ?
-          [<br />, 
-          <SignUp />] :
-          null}
+          
         </Grid>
       </Grid>
       <br />

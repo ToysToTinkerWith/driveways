@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { db, storage } from "./firebase"
+import { db, storage } from "../firebase"
+import firebase from "firebase"
 
 import ImageUploader from "react-images-upload";
 
@@ -23,53 +24,40 @@ function EditJob(props) {
 
   const handleUpdate = (formData) => {
 
-    let imgNames = props.job.imgs
-
-    console.log(imgNames)
-
-    for (let x = 0; x < pictures.length; x++) {
-      imgNames.push(pictures[x].name)
-    }
-
-    console.log(imgNames)
-
     db.collection("clients").doc(props.clientId).collection("jobs").doc(props.jobId).update({
       job: formData.job,
       details: formData.details,
-      scheduled: formData.schedule,
-      price: formData.price,
-      imgs: imgNames,
-    }).then(function(doc) {
+      scheduled: formData.scheduled,
+      estimate: formData.estimate
+    })
 
-      if (pictures.length > 0) {
+    if (pictures.length > 0) {
 
-        for (let y = 0; y < pictures.length; y++) {
+      for (let y = 0; y < pictures.length; y++) {
 
-        const uploadTask = storage.ref("images/" + props.clientId + "/" + props.jobId + "/" + pictures[y].name).put(pictures[y])
+      const uploadTask = storage.ref("images/" + props.clientId + "/" + props.jobId + "/" + pictures[y].name).put(pictures[y])
 
-        uploadTask.on("state_changed", (snapshot) => {
-          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-          setProgress(progress)
-        },
-        (error) => {
-          alert(error.message)
-        },
-        () => {
-          props.setEdit()
-          props.setJob()
+      uploadTask.on("state_changed", (snapshot) => {
+        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+        setProgress(progress)
+      },
+      (error) => {
+        alert(error.message)
+      },
+      () => {
+        storage.ref("images/" + props.clientId + "/" + props.jobId).child(pictures[y].name).getDownloadURL()
+  .then(url => {
+    console.log(url)
+        db.collection("clients").doc(props.clientId).collection("jobs").doc(props.jobId).update({
+          imgs: firebase.firestore.FieldValue.arrayUnion(url)
         })
-
-      }
-      }
-
-      else {
-        props.setEdit()
-        props.setJob()
-      }
-
-      
-
+    })
       })
+
+    }
+
+    
+    }
       
     
 
@@ -87,7 +75,8 @@ function EditJob(props) {
     borderRadius: "15px",
     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     paddingLeft: "10px",
-    paddingRight: "10px"
+    paddingRight: "10px",
+    marginTop: "10px"
  
   }
 
@@ -99,8 +88,8 @@ function EditJob(props) {
       initialValues = {{ 
         job: props.job.job,
         details: props.job.details,
-        price: props.job.price,
-        schedule: props.job.scheduled
+        estimate: props.job.estimate,
+        scheduled: props.job.scheduled
     }}
 
     validate = {values => {
@@ -161,17 +150,17 @@ function EditJob(props) {
         <TextField
           className={classes.input}
           onChange={handleChange}
-          defaultValue={props.job.price}
+          defaultValue={props.job.estimate}
           type="number"
-          label="Price"
-          name="price"
+          label="Estimate"
+          name="estimate"
         />
 
       <br/>
 
 
       <TextField 
-        name="schedule"
+        name="scheduled"
         label="Schedule"
         type="date"
         className={classes.input}
@@ -196,7 +185,7 @@ function EditJob(props) {
 
       <br/>
 
-      <Button type="submit" color="secondary" variant="outlined" disabled={isSubmitting}> Upload </Button>
+      <Button type="submit" color="secondary" variant="outlined" disabled={isSubmitting}> Update </Button>
 
       <br />
       <br />

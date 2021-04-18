@@ -23,7 +23,7 @@ function Map(props) {
       <div style={{ height: "100vh",  width: "100%" }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyBiB3iNngJM_kFWKxSv9a30O3fww7YTiWA"}}
-          center={{lat : 48.0401, lng : -122.4063}}
+          center={{lat : 48.109439, lng : -122.582038}}
           zoom={10}
         >
 

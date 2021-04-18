@@ -4,8 +4,9 @@ import { Button, Typography, makeStyles } from "@material-ui/core"
 
 import Auth from "./auth/auth"
 import Map from "./map/map"
-import NewClient from "./newClient"
-import ClientView from "./clientView"
+import ClientView from "./client/clientView"
+import Jobs from "./job/jobs"
+import Clients from "./client/clients"
 
 import "./App.css"
 
@@ -67,7 +68,11 @@ function Main(props) {
         
 
         <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => setPage("map")}>map</Button>
-        <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => setPage("newClient")}>+ client</Button>
+        <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => setPage("clients")}>clients</Button>
+        <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => setPage("jobs")}>jobs</Button>
+        
+        
+
 
         <Typography className={classes.date} align="center" variant="h5" color="secondary" > {date.toLocaleDateString()} </Typography>
 
@@ -79,18 +84,25 @@ function Main(props) {
 
         <br />
 
-        {page === "map" ?
-        <Map date={date} setPage={setPage} setClientId={setClientId} /> :
+        {page === "map" ? 
+        <Map date={date} setPage={setPage} setClientId={setClientId} />
+        :
         null
         }
 
-        {page === "newClient" ?
-        <NewClient /> :
+        {page === "clients" ?
+        <Clients setPage={setPage} setClientId={setClientId} />
+        :
         null
         }
 
         {page === "client" ?
-        <ClientView clientId={clientId} /> :
+        <ClientView date={date} clientId={clientId} /> :
+        null
+        }
+
+        {page === "jobs" ?
+        <Jobs setPage={setPage} setClientId={setClientId} /> :
         null
         }
 

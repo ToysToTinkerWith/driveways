@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { db, storage } from "./firebase"
+import { db, storage } from "../firebase"
 import firebase from "firebase"
 
 import GoogleMapReact from 'google-map-react';
 import ImageUploader from "react-images-upload";
 
-import countryroads from "./imgs/countryroads.png"
+import countryroads from "../imgs/countryroads.png"
 
 import { Formik, Form } from 'formik';
 import { Button, Typography, TextField, CircularProgress, makeStyles } from '@material-ui/core'
@@ -58,19 +58,13 @@ function NewClient(props) {
     }).then(function(doc) {
 
       let clientId = doc.id
-    
-      let imgNames = []
-
-      for (let x = 0; x < pictures.length; x++) {
-        imgNames.push(pictures[x].name)
-      }
 
       db.collection("clients").doc(doc.id).collection("jobs").add({
         job: formData.job,
         details: formData.details,
-        scheduled: formData.schedule,
-        price: formData.price,
-        imgs: imgNames,
+        scheduled: formData.scheduled,
+        estimate: formData.estimate,
+        imgs: [],
         created: firebase.firestore.FieldValue.serverTimestamp()
       }).then(function(doc) {
 
@@ -85,7 +79,17 @@ function NewClient(props) {
           (error) => {
             alert(error.message)
           },
-          () => {})
+          () => {
+
+            storage.ref("images/" + clientId + "/" + doc.id).child(pictures[y].name).getDownloadURL()
+    .then(url => {
+      console.log(url)
+          db.collection("clients").doc(clientId).collection("jobs").doc(doc.id).update({
+            imgs: firebase.firestore.FieldValue.arrayUnion(url)
+          })
+      })
+            
+          })
 
         }
 
@@ -115,8 +119,7 @@ function NewClient(props) {
   }
 
   const onDrop = (pictureFiles, pictureDataURLs) => {
-    console.log(pictureFiles)
-    console.log(pictureDataURLs)
+    console.log(pictureFiles[0].lastModifiedDate.toLocaleString())
     setPictures(pictureFiles)
   }
 
@@ -126,8 +129,7 @@ function NewClient(props) {
     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     paddingLeft: "10px",
     paddingRight: "10px",
-    marginLeft: "10px",
-    marginRight: "10px"
+    margin: "10px"
   }
 
 
@@ -145,8 +147,8 @@ function NewClient(props) {
 
         job: "",
         details: "",
-        price: 0,
-        schedule: ""
+        estimate: 0,
+        scheduled: ""
 
     }}
 
@@ -178,8 +180,6 @@ function NewClient(props) {
         /* and other goodies */
       }) => (
       <Form onSubmit={handleSubmit} autoComplete="off" >
-
-      <Typography variant="h5" color="secondary"> Client: </Typography>
 
         <TextField
           className={classes.input}
@@ -247,8 +247,6 @@ function NewClient(props) {
       <br/>
       <hr/>
       <br/>
-      <Typography variant="h5" color="secondary"> Job: </Typography>
-
 
         <TextField
           className={classes.input}
@@ -279,15 +277,15 @@ function NewClient(props) {
           className={classes.input}
           onChange={handleChange}
           type="number"
-          label="Price"
-          name="price"
+          label="Estimate"
+          name="estimate"
         />
 
       <br/>
 
 
       <TextField 
-        name="schedule"
+        name="scheduled"
         label="Schedule"
         type="date"
         className={classes.input}

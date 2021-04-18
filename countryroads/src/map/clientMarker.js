@@ -6,50 +6,46 @@ import { db } from "../firebase"
 
 function ClientMarker(props) {
 
-  const [completed, setCompleted] = useState(false)
+  const [markerColor, setMarkerColor] = useState("")
 
   useEffect(() => {
     
-    db.collection("clients").doc(props.clientId).collection("jobs").get().then((query) => {
+    db.collection("clients").doc(props.clientId).collection("jobs").onSnapshot((query) => {
+
+      let color = ""
+
       query.forEach(doc => {
         let jobDate = new Date(doc.data().scheduled + "T16:00")
-        console.log(jobDate)
-        console.log(props.date)
-        if (jobDate < props.date) {
-          setCompleted(true)
+        if (props.date > jobDate) {
+          if (color !== "black" && color !== "red") {
+            color = "green"
+          }
+        }
+        else if (props.date > jobDate.setHours(0) ) {
+          color = "red"
+        }
+        else {
+          if (color !== "red") {
+            color = "black"
+          }
         }
       })
+
+      setMarkerColor(color)
     })
     
 
   })
 
-  if (completed) {
     return (
     <div>
       <IconButton onClick={() => [props.setPage("client"), props.setClientId(props.clientId)]} >
-        <SvgIcon style={{color: "green"}}>
+        <SvgIcon style={{color: markerColor}}>
           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
         </SvgIcon>
       </IconButton>
     </div>
   )
-  }
-
-  else {
-    return (
-    <div>
-      <IconButton onClick={() => [props.setPage("client"), props.setClientId(props.clientId)]} >
-        <SvgIcon style={{color: "red"}}>
-          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-        </SvgIcon>
-      </IconButton>
-    </div>
-  )
-  }
-
-  
-    
   
 }
 

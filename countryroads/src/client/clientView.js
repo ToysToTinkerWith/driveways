@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react"
 
-import JobView from "./jobView"
+import JobView from "../job/jobView"
 import EditClient from "./editClient"
+import NewJob from "../job/newJob"
 
 import { Button, Typography, makeStyles } from "@material-ui/core"
 
-import { db } from "./firebase"
+import { db } from "../firebase"
 
 const useStyles = makeStyles({
   
@@ -22,19 +23,19 @@ const useStyles = makeStyles({
 function ClientView(props) {
 
   const [client, setClient] = useState(null)
-  const [edit, setEdit] = useState(false)
+  const [page, setPage] = useState(null)
   const [jobIds, setJobIds] = useState([])
 
   const classes = useStyles()
 
   useEffect(() => {
 
-    db.collection("clients").doc(props.clientId).get().then(doc => {
+    db.collection("clients").doc(props.clientId).onSnapshot(doc => {
       setClient(doc.data())
     })
 
     db.collection("clients").doc(props.clientId).collection("jobs")
-    .get().then((querySnapshot) => {
+    .onSnapshot((querySnapshot) => {
 
       let jobIds = []
 
@@ -42,36 +43,63 @@ function ClientView(props) {
         jobIds.push(doc.id)
       })
 
+      console.log(jobIds)
+
       setJobIds(jobIds)
 
     })
 
-  }, [props.clientId, edit])
+  }, [props.clientId, page])
 
 
   if (client) {
     return (
       <div className={classes.root}>
-        <Button style={{float: "right"}} variant="outlined" color="secondary" onClick={() => setEdit(!edit)}>Edit</Button>
+        <Button style={{float: "right"}} variant="outlined" color="secondary" onClick={() => 
+        page === "edit" ? setPage(null)
+        : setPage("edit")}>Edit</Button>
+        <Button style={{float: "right"}} variant="outlined" color="secondary" onClick={() => 
+        page === "newJob" ? setPage(null)
+        : setPage("newJob")}>+ Job</Button>
         <Typography variant="h4" color="secondary"> {client.name} </Typography>
         <Typography variant="h5" color="secondary"> {client.address} </Typography>
         <Typography variant="h5" color="secondary"> {client.email} </Typography>
         <Typography variant="h5" color="secondary"> {client.phone} </Typography>
         <br />
 
-        {edit ? 
-        [<EditClient setEdit={setEdit} clientId={props.clientId} client={client} />,
+        {page === "edit" ? 
+        [<EditClient clientId={props.clientId} client={client} />,
         <br />]
         :
         null
         }
+        
+        {page === "newJob" ? 
+        [<NewJob clientId={props.clientId} />,
+        <br />]
+        :
+        null
+        }
+        
+
 
         {jobIds.length > 0 ? jobIds.map(jobId => {
-          return [<JobView address={client.address} clientId={props.clientId} jobId={jobId} />,
+          return [<JobView date={props.date} key={Math.random().toString(36)} clientId={props.clientId} jobId={jobId} setPage={setPage} />,
           <br />]
+          
         })
         :
         null}
+
+        <br />
+
+
+        <br />
+        <br />
+        <br />
+
+        
+
       </div>
     )
   }
